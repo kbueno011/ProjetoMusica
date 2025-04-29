@@ -280,17 +280,18 @@ const insertUsuario = async function(usuario){
 const updateUsuario = async function(usuario){
 
     try {
-        let sql = `update tbl_usuario set        nome            = '${usuario.nome}',
-                                email            = '${usuario.email}',
-                                senha         = '${usuario.senha}',
-                                foto_perfil = '${usuario.foto_perfil}',
-                            where id= ${musica.id}`
+        let sql = `UPDATE tbl_usuario SET 
+        nome = '${usuario.nome}',
+        email = '${usuario.email}',
+        senha = '${usuario.senha}',
+        foto_perfil = '${usuario.foto_perfil}'
+         WHERE id = ${usuario.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
         if(result){
             return true
-        }else{
+        }else{    
             return false
         }
                                             
@@ -302,6 +303,9 @@ const updateUsuario = async function(usuario){
 
 
 }
+
+
+
 
 
 const selectByIdUsuario = async function(id){
