@@ -11,24 +11,16 @@ const { PrismaClient } = require('@prisma/client')
         //Instanciando (criar um novo objeto) para realizar a manipulação do script SQL
         const prisma = new PrismaClient()
 
-//Função para inserir uma nova musica no banco de dados
-const insertMusica = async function(musica){
+
+
+const insertGenero = async function(genero){
     try{
-            let sql = `insert into tbl_musica ( nome,
-                                            link,
-                                            duracao,
-                                            data_lancamento,
-                                            foto_capa,
-                                            letra
+            let sql = `insert into tbl_genero ( 
+                                            nome
                                         ) 
                                         
                                 values (
-                                            '${musica.nome}',
-                                            '${musica.link}',
-                                            '${musica.duracao}',
-                                            '${musica.data_lancamento}',
-                                            '${musica.foto_capa}',
-                                            '${musica.letra}'
+                                            '${genero.nome}'
                                         )`
 
 
@@ -49,17 +41,12 @@ const insertMusica = async function(musica){
 
 }
 
-//Função para atualizar uma musica exstente no banco de dados
-const updateMusica = async function(musica){
+//Função para atualizar um genero exstente no banco de dados
+const updateGenero = async function(genero){
 
     try {
-        let sql = `update tbl_musica set        nome            = '${musica.nome}',
-                                link            = '${musica.link}',
-                                duracao         = '${musica.duracao}',
-                                data_lancamento = '${musica.data_lancamento}',
-                                foto_capa       = '${musica.foto_capa}',
-                                letra           = '${musica.letra}'
-                            where id= ${musica.id}`
+        let sql = `update tbl_musica set        nome            = '${genero.nome}'
+                            where id= ${genero.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -78,11 +65,11 @@ const updateMusica = async function(musica){
 
 }
 
-//Função para deletar uma musica existente no banco de dados
-const deletMusica = async function(id){
+
+const deletGenero = async function(id){
     try {
         //executa o script SQL no banco de dados e aguarda o retorno dos dados
-        let sql = 'delete  from tbl_musica where id='+id
+        let sql = 'delete  from tbl_genero where id='+id
 
         let result = await prisma.$executeRawUnsafe(sql)
        
@@ -96,11 +83,29 @@ const deletMusica = async function(id){
     }
 }
 
-//Função para retornar todas as musicas cadastradas no banco de dados
-const selectAllMusica = async function(){
+
+const selectByIdGenero = async function(id){
     try {
         //executa o script SQL no banco de dados e aguarda o retorno dos dados
-        let sql = 'select * from tbl_musica order by id desc'
+        let sql = 'select * from tbl_genero where id='+id
+
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if(result.length >= 0)
+            return result
+        else
+            return false
+    } catch (error) {(error)
+        return false
+        
+    }   
+}
+
+
+const selectAllGenero = async function(){
+    try {
+        //executa o script SQL no banco de dados e aguarda o retorno dos dados
+        let sql = 'select * from tbl_genero order by id desc'
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -116,28 +121,11 @@ const selectAllMusica = async function(){
     }
 }
 
-const selectByIdMusica = async function(id){
-    try {
-        //executa o script SQL no banco de dados e aguarda o retorno dos dados
-        let sql = 'select * from tbl_musica where id='+id
-
-        let result = await prisma.$queryRawUnsafe(sql)
-
-        if(result.length >= 0)
-            return result
-        else
-            return false
-    } catch (error) {(error)
-        return false
-        
-    }   
-}
-
 
 module.exports = {
-    insertMusica,
-    updateMusica,
-    deletMusica,
-    selectAllMusica,
-    selectByIdMusica
+    insertGenero,
+    updateGenero,
+    selectByIdGenero,
+    deletGenero,
+    selectAllGenero,
 }

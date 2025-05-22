@@ -6,24 +6,22 @@
  *************************************************************************************/
 
 const MESSAGE = require('../../modulo/config.js')
-const musicaDAO = require('../../model/DAO/musica.js')
-//Função para inserir uma musica
-const inserirMusica = async function(musica, contentType){
+const musicaDAO = require('../../model/DAO/usuario.js')
+
+const inserirUsuario = async function(usuario, contentType){
     try{
 
         if(String(contentType).toLowerCase() == 'application/json')
         {
             if( 
-                musica.nome              == undefined  || musica.nome == ''              || musica.nome == null            || musica.nome.length > 80            ||
-                musica.link              == undefined  || musica.link == ''              || musica.link == null            || musica.link.length > 200           ||
-                musica.duracao           == undefined  || musica.duracao == ''           || musica.duracao == null         || musica.duracao.length > 5          ||
-                musica.data_lancamento   == undefined  || musica.data_lancamento == ''   || musica.data_lancamento == null || musica.data_lancamento.length > 10 ||
-                musica.foto_capa         == undefined  || musica.foto_capa.length > 200  ||
-                musica.letra             == undefined
-            ){
+                usuario.nome               == undefined || usuario.nome == ''              || usuario.nome == null            || usuario.nome.length > 80            ||
+                usuario.email              == undefined || usuario.email == ''             || usuario.email == null           || usuario.email.length > 200          ||
+                usuario.senha              == undefined || usuario.senha == ''             || usuario.senha == null           || usuario.senha.length > 200          
+                
+                ){
                 return MESSAGE.ERROR_REQUIRED_FIEDLS
             }else{
-                let resultMusica = await musicaDAO.insertMusica(musica)
+                let resultMusica = await musicaDAO.insertUsuario(usuario)
     
                 if(resultMusica)
                     return MESSAGE.SUCCESS_CREATED_ITEM //201
@@ -42,33 +40,26 @@ const inserirMusica = async function(musica, contentType){
 }
 
 
-//Função para atualizar uma musica
-const atualizarMusica = async function(musica, id, contentType){
+const atualizarUsuario = async function(usuario, id, contentType){
     try {
         if(String(contentType).toLowerCase() == 'application/json')
             {
                 if( 
-                    musica.nome               == undefined || musica.nome == ''              || musica.nome == null            || musica.nome.length > 80            ||
-                    musica.link              == undefined  || musica.link == ''              || musica.link == null            || musica.link.length > 200           ||
-                    musica.duracao           == undefined  || musica.duracao == ''           || musica.duracao == null         || musica.duracao.length > 5          ||
-                    musica.data_lancamento   == undefined  || musica.data_lancamento == ''   || musica.data_lancamento == null || musica.data_lancamento.length > 10 ||
-                    musica.foto_capa         == undefined  || musica.foto_capa.length > 200  ||
-                    musica.letra             == undefined  ||
-                    id =='' || id == undefined || id == null || isNaN(id) || id <= 0
-                    
-                
+                        usuario.nome               == undefined || usuario.nome == ''              || usuario.nome == null            || usuario.nome.length > 80            ||
+                        usuario.email              == undefined || usuario.email == ''             || usuario.email == null           || usuario.email.length > 200          ||
+                        usuario.senha              == undefined || usuario.senha == ''             || usuario.senha == null           || usuario.senha.length > 200          
                 ){
                     return MESSAGE.ERROR_REQUIRED_FIEDLS //400
                 }else{
                     // validar se o id existe no banco bd
 
-                    let resultMusica = await buscarMusica(id)
+                    let resultMusica = await buscarUsuario(id)
 
                     if (resultMusica.status_code == 200){
                         //update
                         // Adiciona o atributo ID no JSON e coloca o id da musica que chegou na controller 
-                        musica.id = id
-                        let result = await musicaDAO.updateMusica(musica)
+                        usuario.id = id
+                        let result = await musicaDAO.updateUsuario(usuario)
 
                         if(result){
                             return MESSAGE.SUCCESS_UPDATE_ITEM //200
@@ -93,19 +84,53 @@ const atualizarMusica = async function(musica, id, contentType){
 }
 
 
-//Função para excluir uma musica
-const excluirMusica = async function(id){
+const buscarUsuario = async function(id){
+
+    try {
+
+        if(id == '' || id == undefined || id == null || isNaN(id) || id <= 0){
+            return MESSAGE.ERROR_REQUIRED_FIEDLS //400
+        }else{
+            let dadosMusica = {}
+            let resultMusica = await musicaDAO.selectByIdUsuario(id)
+
+            if (resultMusica != false || typeof(resultMusica) == 'object'){
+
+                if (resultMusica.length > 0){
+                    //Criando um JSON para retornar a lista de musicas
+                    dadosMusica.status = true
+                    dadosMusica.status_code = 200
+
+                    dadosMusica.musics = resultMusica
+                    return dadosMusica //200
+                }else{
+                    return MESSAGE.ERROR_NOT_FOUND
+                }
+
+            }else{
+                return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+            }
+        }
+
+    } catch (error) {
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
+    }
+    
+}
+
+
+const excluirUsuario = async function(id){
     try {
 
         if(id == '' || id == undefined || id == null || isNaN(id) || id <=0 ){
             return MESSAGE.ERROR_REQUIRED_FIEDLS//400      
         }else{
             //VALIDAR se o ID existe
-            let resultMusica = await buscarMusica(id)
+            let resultMusica = await buscarUsuario(id)
 
             if(resultMusica.status_code == 200){
                 //DELETE
-                let result = await musicaDAO.deletMusica(id)
+                let result = await musicaDAO.deletUsuario(id)
                 if(result){
                     return MESSAGE.SUCCESS_DELETE_ITEM
                 }else{
@@ -124,15 +149,14 @@ const excluirMusica = async function(id){
 }
 
 
-//Função para listar todas as musica
-const listarMusica = async function(){
+const listarUsuario = async function(){
     
     try {
 
         let dadosMusica = {}
 
         //Chamar a função que retorna todas as musicas
-        let resultMusica = await musicaDAO.selectAllMusica()
+        let resultMusica = await musicaDAO.selectAllUsuarios()
         
         if (resultMusica != false || typeof(resultMusica) == 'object'){
 
@@ -162,52 +186,12 @@ const listarMusica = async function(){
 }
 
 
-//Função para buscar uma musica pelo id 
-const buscarMusica = async function(id){
-
-    try {
-
-        if(id == '' || id == undefined || id == null || isNaN(id) || id <= 0){
-            return MESSAGE.ERROR_REQUIRED_FIEDLS //400
-        }else{
-            let dadosMusica = {}
-            let resultMusica = await musicaDAO.selectByIdMusica(id)
-
-            if (resultMusica != false || typeof(resultMusica) == 'object'){
-
-                if (resultMusica.length > 0){
-                    //Criando um JSON para retornar a lista de musicas
-                    dadosMusica.status = true
-                    dadosMusica.status_code = 200
-
-                    dadosMusica.musics = resultMusica
-                    return dadosMusica //200
-                }else{
-                    return MESSAGE.ERROR_NOT_FOUND
-                }
-
-            }else{
-                return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
-            }
-        }
-
-    } catch (error) {
-        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
-    }
-    
-}
-
-
-
-
-
-
-
-
 module.exports = {
-    inserirMusica,
-    atualizarMusica,
-    excluirMusica,
-    listarMusica,
-    buscarMusica
+
+    inserirUsuario,
+    buscarUsuario,
+    atualizarUsuario,
+    excluirUsuario,
+    listarUsuario
+
 }

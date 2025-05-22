@@ -25,6 +25,9 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const controllerMusica = require('./controller/musica/controllerMusica.js')
+const controllerGenero = require('./controller/musica/controllerGenero.js')
+const controllerUsuario = require('./controller/musica/controllerUsuario.js')
+const controllerArtista = require('./controller/musica/controllerArtista.js')
 
 const app = express()
 
@@ -72,7 +75,7 @@ app.post('/v1/controle-musicas/genero', async (request, response) => {
     const contentType = request.headers['content-type']
     const dadosBody = request.body
 
-    const result = await controllerMusica.inserirGenero(dadosBody, contentType)
+    const result = await controllerGenero.inserirGenero(dadosBody, contentType)
     response.status(result.status_code).json(result)
 })
 
@@ -81,24 +84,24 @@ app.put('/v1/controle-musicas/genero/:id', async (request, response) => {
     const idGenero = request.params.id
     const dadosBody = request.body
 
-    const result = await controllerMusica.atualizarGenero(dadosBody, idGenero, contentType)
+    const result = await controllerGenero.atualizarGenero(dadosBody, idGenero, contentType)
     response.status(result.status_code).json(result)
 })
 
 app.delete('/v1/controle-musicas/genero/:id', async (request, response) => {
     const idGenero = request.params.id
-    const result = await controllerMusica.excluirGenero(idGenero)
+    const result = await controllerGenero.excluirGenero(idGenero)
     response.status(result.status_code).json(result)
 })
 
 app.get('/v1/controle-musicas/genero', async (request, response) => {
-    const result = await controllerMusica.listarGenero()
+    const result = await controllerGenero.listarGenero()
     response.status(result.status_code).json(result)
 })
 
 app.get('/v1/controle-musicas/genero/:id', async (request, response) => {
     const idGenero = request.params.id
-    const result = await controllerMusica.buscarGenero(idGenero)
+    const result = await controllerGenero.buscarGenero(idGenero)
     response.status(result.status_code).json(result)
 })
 
@@ -107,7 +110,7 @@ app.post('/v1/controle-musicas/usuario', async (request, response) => {
     const contentType = request.headers['content-type']
     const dadosBody = request.body
 
-    const result = await controllerMusica.inserirUsuario(dadosBody, contentType)
+    const result = await controllerUsuario.inserirUsuario(dadosBody, contentType)
     response.status(result.status_code).json(result)
 })
 
@@ -116,24 +119,24 @@ app.put('/v1/controle-musicas/usuario/:id', async (request, response) => {
     const idUsuario = request.params.id
     const dadosBody = request.body
 
-    const result = await controllerMusica.atualizarUsuario(dadosBody, idUsuario, contentType)
+    const result = await controllerUsuario.atualizarUsuario(dadosBody, idUsuario, contentType)
     response.status(result.status_code).json(result)
 })
 
 app.delete('/v1/controle-musicas/usuario/:id', async (request, response) => {
     const idUsuario = request.params.id
-    const result = await controllerMusica.excluirUsuario(idUsuario)
+    const result = await controllerUsuario.excluirUsuario(idUsuario)
     response.status(result.status_code).json(result)
 })
 
 app.get('/v1/controle-musicas/usuario', async (request, response) => {
-    const result = await controllerMusica.listarUsuario()
+    const result = await controllerUsuario.listarUsuario()
     response.status(result.status_code).json(result)
 })
 
 app.get('/v1/controle-musicas/usuario/:id', async (request, response) => {
     const idUsuario = request.params.id
-    const result = await controllerMusica.buscarUsuario(idUsuario)
+    const result = await controllerUsuario.buscarUsuario(idUsuario)
     response.status(result.status_code).json(result)
 })
 
